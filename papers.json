@@ -1,0 +1,38 @@
+{
+  "meta-anal": [
+    "Systematic Review and Meta-Analysis of Neurofeedback Training Efficacy and Neural Mechanisms in the Treatment of Posttraumatic Stress Disorder",
+    "Neurofeedback for Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
+    "Systematic Review and Meta-Analysis of Neurofeedback and Its Effect on Posttraumatic Stress Disorder",
+    "Effect of EEG Neurofeedback Therapy on Addiction Disorders: A Systematic Review and Meta-Analysis",
+    "Neurofeedback for Post-Traumatic Stress Disorder: Systematic Review and Meta-Analysis of Clinical and Neurophysiological Outcomes",
+    "The Combined Effectiveness of Neurofeedback and Complementary or Neuromodulatory Therapies on Adult Mental Health: A Systematic Review",
+    "Systematic Review and Meta-Analysis of the Relationships Between Real-Time Neurofeedback Training Parameters and Acquisition of Neural Modulation",
+    "Neurofeedback Training for Executive Function in ADHD Children: A Systematic Review and Meta-Analysis",
+    "A Systematic Review on the Role of EEG and fMRI-Neurofeedback Training in the Treatment of Substance Use Disorders and Behavioral Addiction",
+    "Neurofeedback in Substance and Non-Substance-Related Addictions: A Mini Review of Current Evidence and Future Directions",
+    "Mapping the Evolution of Neurofeedback Research: A Bibliometric Analysis of Trends and Future Directions"
+  ],
+  "RCTs": [
+    "A Randomized Controlled Study of Neurofeedback for Chronic PTSD",
+    "A Randomized, Controlled Trial of Alpha-Rhythm EEG Neurofeedback in Posttraumatic Stress Disorder",
+    "Randomized Clinical Trial of Real-Time fMRI Amygdala Neurofeedback for Major Depressive Disorder: Effects on Symptoms and Autobiographical Memory Recall",
+    "Amygdala Real-Time fMRI Neurofeedback Upregulation in Treatment-Resistant Depression: Proof of Concept and Dose Determination",
+    "Clinical Response to Neurofeedback in Major Depression Relates to Subtypes of Whole-Brain Activation Patterns During Training",
+    "Reward System EEG-fMRI-Pattern Neurofeedback for Major Depressive Disorder with Anhedonia: A Multicenter Pilot Study",
+    "Amygdala-Related Electroencephalogram Neurofeedback as Add-on Therapy for Treatment-Resistant Childhood Sexual Abuse Posttraumatic Stress Disorder: Feasibility Study",
+    "Effectiveness of Neurofeedback-Assisted and Conventional 6-Week Web-Based Mindfulness Interventions on Mental Health of Chinese Nursing Students: Randomized Controlled Trial",
+    "Infralow Neurofeedback in the Treatment of Substance Use Disorders: A Randomized Controlled Trial",
+    "Near-Infrared Spectroscopy and Electroencephalography Neurofeedback for Binge-Eating Disorder: An Exploratory Randomized Trial"
+  ],
+  "protocol-studies": [
+    "Facing Emotions: Real-Time fMRI-Based Neurofeedback Using Dynamic Emotional Faces to Modulate Amygdala Activity",
+    "Real-Time Functional Connectivity-Based Neurofeedback of the DLPFC-Amygdala Pathway During Threat-Exposure Attenuates Anxiety",
+    "A Randomised Controlled Trial of Amygdala fMRI-Neurofeedback Versus Sham-Feedback in Borderline Personality Disorder (BrainSTEADy Trial)",
+    "PCC and Amygdala-Targeted Real-Time fMRI Neurofeedback for PTSD: Protocol for a Randomized Controlled Trial",
+    "Integration of Limbic Self-Neuromodulation with Psychotherapy for Complex Post-Traumatic Stress Disorder: Treatment Rationale and Case Study",
+    "Enhancing Effects of Exercise and Neurofeedback: A Systematic Review and Meta-Analysis of Computer Game-Based Interventions for Pediatric ADHD",
+    "A Pilot Study of Neurofeedback for Chronic PTSD",
+    "The Potential of Functional Near-Infrared Spectroscopy-Based Neurofeedback: A Systematic Review and Recommendations for Best Practice",
+    "Closed-Loop Brain Training: The Science of Neurofeedback"
+  ]
+}
