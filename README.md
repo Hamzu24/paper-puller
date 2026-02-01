@@ -1,8 +1,8 @@
 scihub.py
-[![Python](https://img.shields.io/badge/Python-3%2B-blue.svg)](https://www.python.org)
 =========
+[![Python](https://img.shields.io/badge/Python-3%2B-blue.svg)](https://www.python.org)
 
-scihub.py is an unofficial API for Sci-hub. scihub.py can search for papers on Google Scholars and download papers from Sci-hub. It can be imported independently or used from the command-line.
+scihub.py is an unofficial API for Sci-hub. scihub.py can search for papers on Google Scholar and download papers from Sci-hub. It can be imported independently or used from the command-line.
 
 If you believe in open access to scientific papers, please donate to Sci-Hub.
 
@@ -10,7 +10,7 @@ Features
 --------
 * Download specific articles directly or via Sci-hub
 * Download a collection of articles by passing in file of article identifiers
-* Search for articles on Google Scholars and download them
+* Search for articles on Google Scholar and download them
 
 **Note**: A known limitation of scihub.py is that captchas show up every now and then, blocking any searches or downloads.
 
@@ -36,9 +36,9 @@ optional arguments:
                         tries to find and download the paper
   -f path, --file path  pass file with list of identifiers and download each
   -s query, --search query
-                        search Google Scholars
+                        search Google Scholar
   -sd query, --search_download query
-                        search Google Scholars and download if possible
+                        search Google Scholar and download if possible
   -l N, --limit N       the number of search results to limit to
   -o path, --output path
                         directory to store papers
@@ -83,7 +83,7 @@ from scihub import SciHub
 
 sh = SciHub()
 
-# retrieve 5 articles on Google Scholars related to 'bittorrent'
+# retrieve 5 articles on Google Scholar related to 'bittorrent'
 results = sh.search('bittorrent', 5)
 
 # download the papers; will use sci-hub.io if it must
@@ -91,16 +91,7 @@ for paper in results['papers']:
 	sh.download(paper['url'])
 
 ```
+
 License
 -------
 MIT
-
-
-
-
-
-
-
-
-
-
