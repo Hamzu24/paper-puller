@@ -34,5 +34,45 @@
     "A Pilot Study of Neurofeedback for Chronic PTSD",
     "The Potential of Functional Near-Infrared Spectroscopy-Based Neurofeedback: A Systematic Review and Recommendations for Best Practice",
     "Closed-Loop Brain Training: The Science of Neurofeedback"
+  ],
+  "placebo-sham": [
+    "The Psychology of Neurofeedback: Clinical Intervention Even if Applied Placebo",
+    "Neurofeedback or Neuroplacebo?",
+    "Treating ADHD With Suggestion: Neurofeedback and Placebo Therapeutics",
+    "When Can Neurofeedback Join the Clinical Armamentarium?",
+    "Neurofeedback as Placebo: A Case of Unintentional Deception?",
+    "Consumer-Grade Neurofeedback With Mindfulness Meditation: Meta-Analysis",
+    "A Framework for Disentangling the Hyperbolic Truth of Neurofeedback: Comment on Thibault and Raz (2017)"
+  ],
+  "null-result": [
+    "Double-Blind, Sham-Controlled Randomized Trial Testing the Efficacy of fMRI Neurofeedback on Clinical and Cognitive Measures in Children With ADHD",
+    "Neurofeedback, Sham Neurofeedback, and Cognitive-Behavioural Group Therapy in Adults With ADHD: A Triple-Blind, Randomised, Controlled Trial",
+    "Better Than Sham? A Double-Blind Placebo-Controlled Neurofeedback Study in Primary Insomnia",
+    "Double-Blind Placebo-Controlled Randomized Clinical Trial of Neurofeedback for Attention-Deficit/Hyperactivity Disorder With 13-Month Follow-Up",
+    "ADHD and EEG-Neurofeedback: A Double-Blind Randomized Placebo-Controlled Feasibility Study",
+    "Infralow Neurofeedback in the Treatment of Substance Use Disorders: A Randomized Controlled Trial",
+    "An RCT Into the Effects of Neurofeedback on Neurocognitive Functioning Compared to Stimulant Medication and Physical Activity in Children With ADHD"
+  ],
+  "critical": [
+    "Neurofeedback for Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
+    "Neurofeedback for ADHD: Time to Call It Quits?",
+    "Systematic Review and Meta-Analysis of Neurofeedback Training Efficacy and Neural Mechanisms in the Treatment of Posttraumatic Stress Disorder",
+    "Nonpharmacological Interventions for ADHD: Systematic Review and Meta-Analyses of Randomized Controlled Trials of Dietary and Psychological Treatments",
+    "Neurofeedback for Attention-Deficit/Hyperactivity Disorder: Meta-Analysis of Clinical and Neuropsychological Outcomes From Randomized Controlled Trials",
+    "Neurotherapeutics for ADHD: Do They Work?"
+  ],
+  "critical2": [
+    "The self-regulating brain and neurofeedback: Experimental science and clinical promise",
+    "Neurofeedback with fMRI: A critical systematic review",
+    "Methodological flaws in the Schönenberg (2017) neurofeedback study",
+    "Neurofeedback in ADHD and insomnia: Vigilance stabilization through sleep spindles and circadian networks",
+    "Can we predict who will respond to neurofeedback? A review of the inefficacy problem and existing predictors for successful EEG neurofeedback learning",
+    "Are treatment effects of neurofeedback training in children with ADHD related to the successful regulation of brain activity? A review on the learning of regulation of brain activity and a contribution to the discussion on specificity",
+    "Clinical utility of EEG in attention deficit hyperactivity disorder",
+    "The do's and don'ts of neurofeedback training: A review of the controlled studies using healthy adults",
+    "EEG-neurofeedback for optimising performance: A review of cognitive and affective outcome in healthy participants",
+    "Closed-loop brain training: The science of neurofeedback",
+    "The increase in theta/beta ratio on resting-state EEG in boys with attention-deficit/hyperactivity disorder is mediated by slow alpha peak frequency",
+    "A decade of EEG theta/beta ratio research in ADHD: A meta-analysis"
   ]
 }

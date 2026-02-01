@@ -24,7 +24,7 @@ from retrying import retry
 # log config
 logging.basicConfig()
 logger = logging.getLogger('Sci-Hub')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)  # Default to WARNING; use -v flag for debug output
 
 #
 urllib3.disable_warnings()
@@ -55,12 +55,30 @@ class SciHub(object):
         Finds available scihub urls via https://sci-hub.now.sh/
         Tests each URL and filters out those returning 403 (Cloudflare blocked).
         '''
+        # Known working mirrors (prioritized)
+        known_mirrors = [
+            'https://sci-hub.ru',
+            'https://sci-hub.st',
+            'https://sci-hub.se',
+        ]
+
         urls = []
-        res = requests.get('https://sci-hub.now.sh/')
-        s = self._get_soup(res.content)
-        for a in s.find_all('a', href=True):
-            if 'sci-hub.' in a['href']:
-                urls.append(a['href'])
+        try:
+            res = requests.get('https://sci-hub.now.sh/', timeout=10)
+            s = self._get_soup(res.content)
+            for a in s.find_all('a', href=True):
+                if 'sci-hub.' in a['href']:
+                    urls.append(a['href'])
+        except Exception as e:
+            logger.debug('Failed to fetch mirror list: %s', e)
+
+        # Add known mirrors if not already in list
+        for mirror in known_mirrors:
+            if mirror not in urls:
+                urls.insert(0, mirror)
+
+        # Prioritize known working mirrors at the front
+        urls = sorted(urls, key=lambda x: (x not in known_mirrors, urls.index(x) if x in urls else 999))
 
         # Test each URL and filter out blocked ones
         working_urls = []
@@ -941,7 +959,7 @@ class SciHub(object):
         Returns dict with 'arxiv_id' if found, empty dict otherwise.
         Uses stricter threshold (0.70) since arXiv has many similar titles.
         """
-        ARXIV_THRESHOLD = 0.70  # Strict threshold for arXiv (many similar titles)
+        ARXIV_THRESHOLD = 0.85  # Strict threshold for arXiv (many similar titles)
 
         url = 'http://export.arxiv.org/api/query'
         # Use title-specific search for better matching
@@ -973,6 +991,7 @@ class SciHub(object):
 
         # Require threshold match for reliable results
         if best_match is None or best_score < ARXIV_THRESHOLD:
+            logger.debug('arXiv: No match found for title (best score: %.0f%%)', best_score * 100)
             return {}
 
         # Extract arXiv ID from the entry ID (e.g., http://arxiv.org/abs/1810.04805v2)
@@ -997,7 +1016,7 @@ class SciHub(object):
         Returns dict with 'doi', 'arxiv_id', and/or 'pdf_url' if found, empty dict otherwise.
         Uses more lenient threshold (0.60) since OpenAlex has good relevance ranking.
         """
-        OPENALEX_THRESHOLD = 0.60  # More lenient for OpenAlex (good relevance ranking)
+        OPENALEX_THRESHOLD = 0.80  # Require strong match to avoid wrong papers
 
         url = 'https://api.openalex.org/works'
         params = {
@@ -1027,6 +1046,7 @@ class SciHub(object):
 
         # Require threshold match for reliable results
         if not best_match or best_score < OPENALEX_THRESHOLD:
+            logger.debug('OpenAlex: No match found for title (best score: %.0f%%)', best_score * 100)
             return {}
 
         logger.debug('OpenAlex: Found paper with %.0f%% title match: %s', best_score * 100, best_match.get('title', ''))
@@ -1061,7 +1081,7 @@ class SciHub(object):
         Returns dict with 'doi', 'arxiv_id', and/or 'pdf_url' if found, empty dict otherwise.
         Uses more lenient threshold (0.60) since Semantic Scholar has good relevance ranking.
         """
-        SEMANTIC_SCHOLAR_THRESHOLD = 0.60  # More lenient (good relevance ranking)
+        SEMANTIC_SCHOLAR_THRESHOLD = 0.80  # Require strong match to avoid wrong papers
 
         url = 'https://api.semanticscholar.org/graph/v1/paper/search'
         params = {
@@ -1091,6 +1111,7 @@ class SciHub(object):
 
         # Require threshold match for reliable results
         if not best_match or best_score < SEMANTIC_SCHOLAR_THRESHOLD:
+            logger.debug('Semantic Scholar: No match found for title (best score: %.0f%%)', best_score * 100)
             return {}
 
         logger.debug('Semantic Scholar: Found paper with %.0f%% title match: %s', best_score * 100, best_match.get('title', ''))
@@ -1175,18 +1196,61 @@ class SciHub(object):
 
     def _search_direct_url(self, identifier):
         """
-        Sci-Hub embeds papers in an iframe. This function finds the actual
+        Sci-Hub embeds papers in various ways. This function finds the actual
         source url which looks something like https://moscow.sci-hub.io/.../....pdf.
+
+        Handles multiple embedding methods:
+        - iframe elements (legacy)
+        - embed elements
+        - JavaScript fetch() calls to /storage/.../*.pdf
+        - Direct PDF links
         """
         res = self.sess.get(self.base_url + identifier, verify=False)
         s = self._get_soup(res.content)
+        page_content = res.text
+
+        # Method 1: Check for iframe (legacy method)
         iframe = s.find('iframe')
-        if iframe:
-            return iframe.get('src') if not iframe.get('src').startswith('//') \
-                else 'http:' + iframe.get('src')
-        else:
-            logger.debug('No iframe found on Sci-Hub page for identifier: %s (URL: %s)',
-                        identifier, self.base_url + identifier)
+        if iframe and iframe.get('src'):
+            src = iframe.get('src')
+            if src.startswith('//'):
+                return 'https:' + src
+            elif src.startswith('/'):
+                return self.base_url.rstrip('/') + src
+            return src
+
+        # Method 2: Check for embed element
+        embed = s.find('embed')
+        if embed and embed.get('src'):
+            src = embed.get('src')
+            if src.startswith('//'):
+                return 'https:' + src
+            elif src.startswith('/'):
+                return self.base_url.rstrip('/') + src
+            return src
+
+        # Method 3: Check for PDF URL in JavaScript (fetch('/storage/.../paper.pdf'))
+        pdf_match = re.search(r"['\"](/storage/[^'\"]+\.pdf)['\"]", page_content)
+        if pdf_match:
+            return self.base_url.rstrip('/') + pdf_match.group(1)
+
+        # Method 4: Check for direct PDF link in onclick or href
+        pdf_link = re.search(r"location\.href\s*=\s*['\"]([^'\"]+\.pdf)['\"]", page_content)
+        if pdf_link:
+            src = pdf_link.group(1)
+            if src.startswith('/'):
+                return self.base_url.rstrip('/') + src
+            return src
+
+        # Method 5: Check citation_pdf_url meta tag
+        meta_pdf = s.find('meta', {'name': 'citation_pdf_url'})
+        if meta_pdf and meta_pdf.get('content'):
+            content = meta_pdf.get('content')
+            if '{pdf}' not in content:  # Skip template URLs
+                return content
+
+        logger.debug('No PDF found on Sci-Hub page for identifier: %s (URL: %s)',
+                    identifier, self.base_url + identifier)
 
     def _classify(self, identifier):
         """
