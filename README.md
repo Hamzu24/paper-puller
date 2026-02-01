@@ -1,18 +1,15 @@
-scihub.py
-=========
+paper-puller
+============
 [![Python](https://img.shields.io/badge/Python-3%2B-blue.svg)](https://www.python.org)
 
-scihub.py is an unofficial API for Sci-hub. scihub.py can search for papers on Google Scholar and download papers from Sci-hub. It can be imported independently or used from the command-line.
-
-If you believe in open access to scientific papers, please donate to Sci-Hub.
+A tool to batch download research papers by title. Searches multiple open access sources and falls back to Sci-Hub when needed.
 
 Features
 --------
-* Download specific articles directly or via Sci-hub
-* Download a collection of articles by passing in file of article identifiers
-* Search for articles on Google Scholar and download them
-
-**Note**: A known limitation of scihub.py is that captchas show up every now and then, blocking any searches or downloads.
+* **Batch download by title** - Give it a list of paper titles and it finds & downloads them
+* **Multiple sources** - Tries arXiv, Unpaywall, Europe PMC, Semantic Scholar, OpenAlex, CrossRef, CORE, Internet Archive, and Sci-Hub
+* **Smart title matching** - Uses fuzzy matching to find the right paper even with slight title variations
+* **TUI viewer** - Browse and open downloaded papers with `paper_viewer.py`
 
 Setup
 -----
@@ -21,76 +18,100 @@ pip install -r requirements.txt
 ```
 
 Usage
-------
-You can interact with scihub.py from the commandline:
+-----
+
+### Batch download (main use case)
+
+Create a `papers.json` file with paper titles organized by category:
+
+```json
+{
+  "transformers": [
+    "Attention Is All You Need",
+    "BERT: Pre-training of Deep Bidirectional Transformers"
+  ],
+  "diffusion": [
+    "Denoising Diffusion Probabilistic Models"
+  ]
+}
+```
+
+Then download a category:
+
+```bash
+# List available categories
+python puller/pull.py --list
+
+# Download all papers in a category
+python puller/pull.py transformers
+
+# Specify output directory
+python puller/pull.py transformers -o ./my-papers/
+```
+
+### Download a single paper
+
+```bash
+# By DOI
+python puller/pull.py -d "10.1038/nature12373"
+
+# By arXiv ID
+python puller/pull.py -d "arXiv:1706.03762"
+
+# By URL
+python puller/pull.py -d "https://arxiv.org/abs/1706.03762"
+
+# By PMID
+python puller/pull.py -d "12345678"
+```
+
+### Browse downloaded papers
+
+```bash
+python paper_viewer.py
+```
+
+Use arrow keys or j/k to navigate, Enter to open, / to search, q to quit.
+
+### Other options
 
 ```
-usage: scihub.py [-h] [-d (DOI|PMID|URL)] [-f path] [-s query] [-sd query]
-                 [-l N] [-o path] [-v]
-
-SciHub - To remove all barriers in the way of science.
+python puller/pull.py -h
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -d (DOI|PMID|URL), --download (DOI|PMID|URL)
-                        tries to find and download the paper
-  -f path, --file path  pass file with list of identifiers and download each
-  -s query, --search query
-                        search Google Scholar
-  -sd query, --search_download query
-                        search Google Scholar and download if possible
-  -l N, --limit N       the number of search results to limit to
-  -o path, --output path
-                        directory to store papers
-  -v, --verbose         increase output verbosity
-  -p, --proxy           set proxy
+  -d, --download (DOI|PMID|URL)  Download a single paper
+  -f, --file path                Download from file of identifiers
+  -s, --search query             Search Google Scholar
+  -sd, --search_download query   Search and download
+  -l, --limit N                  Limit search results (default: 10)
+  -o, --output path              Output directory (default: papers/)
+  -v, --verbose                  Verbose output
+  -p, --proxy                    Proxy (e.g., socks5://user:pass@host:port)
 ```
 
-You can also import scihub. The following examples below demonstrate all the features.
+Library usage
+-------------
 
-### fetch
-
-```
-from scihub import SciHub
+```python
+from puller.pull import SciHub
 
 sh = SciHub()
 
-# fetch specific article (don't download to disk)
-# this will return a dictionary in the form 
-# {'pdf': PDF_DATA,
-#  'url': SOURCE_URL,
-#  'name': UNIQUE_GENERATED NAME
-# }
-result = sh.fetch('http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=1648853')
+# Download by DOI/URL/PMID
+result = sh.download('10.1038/nature12373', destination='papers/')
+
+# Fetch without saving
+result = sh.fetch('arXiv:1706.03762')
+# Returns: {'pdf': bytes, 'url': str, 'name': str}
+
+# Batch download from JSON
+sh.download_from_json('papers.json', 'transformers', 'papers/')
 ```
 
-### download
-
-```
-from scihub import SciHub
-
-sh = SciHub()
-
-# exactly the same thing as fetch except downloads the articles to disk
-# if no path given, a unique name will be used as the file name
-result = sh.download('http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=1648853', path='paper.pdf')
-```
-
-### search
-
-```
-from scihub import SciHub
-
-sh = SciHub()
-
-# retrieve 5 articles on Google Scholar related to 'bittorrent'
-results = sh.search('bittorrent', 5)
-
-# download the papers; will use sci-hub.io if it must
-for paper in results['papers']:
-	sh.download(paper['url'])
-
-```
+Known Limitations
+-----------------
+* Captchas may block requests after heavy usage
+* Some papers may not be available through any source
 
 License
 -------
