@@ -31,6 +31,7 @@ urllib3.disable_warnings()
 
 # constants
 SCHOLARS_BASE_URL = 'https://scholar.google.com/scholar'
+ANNAS_ARCHIVE_BASE_URL = 'https://annas-archive.org'
 HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:27.0) Gecko/20100101 Firefox/27.0'}
 
 class SciHub(object):
@@ -253,6 +254,22 @@ class SciHub(object):
                 logger.info('Failed to fetch pdf with identifier %s '
                                            '(resolved url %s) due to captcha' % (identifier, url))
 
+                # Try Anna's Archive as first fallback
+                logger.debug('Trying Anna\'s Archive after Sci-Hub failure...')
+                pdf_url = self._search_annas_archive(identifier)
+                if pdf_url:
+                    logger.debug('Found PDF via Anna\'s Archive: %s', pdf_url)
+                    try:
+                        res = self.sess.get(pdf_url, verify=False, timeout=30)
+                        if res.headers.get('Content-Type', '') == 'application/pdf':
+                            return {
+                                'pdf': res.content,
+                                'url': pdf_url,
+                                'name': self._generate_name(res, title=title)
+                            }
+                    except Exception as e:
+                        logger.debug('Anna\'s Archive download failed: %s', e)
+
                 # Try open access sources as fallback before giving up
                 id_type = self._classify(identifier)
                 if self.use_open_access and id_type == 'doi':
@@ -328,7 +345,15 @@ class SciHub(object):
             except Exception as e:
                 logger.debug('Sci-Hub lookup failed: %s', e)
 
-            # Fall back to open access sources if Sci-Hub fails
+            # Try Anna's Archive before open access sources
+            try:
+                url = self._search_annas_archive(identifier)
+                if url:
+                    return url
+            except Exception as e:
+                logger.debug('Anna\'s Archive lookup failed: %s', e)
+
+            # Fall back to open access sources if both fail
             if self.use_open_access and id_type == 'doi':
                 pdf_url = self._try_open_access_sources(identifier)
                 if pdf_url:
@@ -898,6 +923,190 @@ class SciHub(object):
                                     return url
 
         return None
+
+    def _search_annas_archive(self, identifier):
+        """
+        Search Anna's Archive for paper.
+        Supports DOI search and title search.
+        Returns direct download URL or None.
+
+        Filters for academic papers only (skips books/textbooks).
+        """
+        try:
+            # Search using the identifier (DOI or title)
+            search_url = f'{ANNAS_ARCHIVE_BASE_URL}/search'
+            params = {'q': identifier}
+
+            res = self.sess.get(search_url, params=params, timeout=15)
+            if res.status_code != 200:
+                logger.debug('Anna\'s Archive search returned status %d', res.status_code)
+                return None
+
+            soup = self._get_soup(res.content)
+
+            # Find search results - they're links with js-vim-focus class
+            results = soup.find_all('a', class_='js-vim-focus')
+
+            for result in results:
+                # Check file info to filter for PDFs and academic papers
+                file_info_div = result.find('div', class_=lambda x: x and 'text-xs' in x and 'text-gray' in x)
+                if not file_info_div:
+                    continue
+
+                file_info = file_info_div.get_text().lower()
+
+                # Filter for PDFs
+                if 'pdf' not in file_info:
+                    continue
+
+                # Filter out books/textbooks (typically larger files, many pages)
+                # Academic papers are typically < 50MB and < 100 pages
+                # Look for indicators of books
+                is_book = False
+
+                # Check for "book" in category or metadata
+                category_div = result.find('div', class_=lambda x: x and 'truncate' in x)
+                if category_div:
+                    category_text = category_div.get_text().lower()
+                    if 'book' in category_text or 'textbook' in category_text:
+                        is_book = True
+
+                # Check file size - books are typically > 20MB
+                size_match = re.search(r'(\d+(?:\.\d+)?)\s*(mb|gb)', file_info)
+                if size_match:
+                    size_num = float(size_match.group(1))
+                    size_unit = size_match.group(2)
+                    if size_unit == 'gb' or (size_unit == 'mb' and size_num > 50):
+                        is_book = True
+
+                # Check page count - books typically have > 100 pages
+                pages_match = re.search(r'(\d+)\s*pages?', file_info)
+                if pages_match:
+                    pages = int(pages_match.group(1))
+                    if pages > 150:
+                        is_book = True
+
+                if is_book:
+                    logger.debug('Anna\'s Archive: Skipping book result')
+                    continue
+
+                # Get the path to the detail page
+                path = result.get('href')
+                if not path:
+                    continue
+
+                # Fetch detail page and get download links
+                download_url = self._get_annas_archive_download_links(path)
+                if download_url:
+                    return download_url
+
+            logger.debug('Anna\'s Archive: No suitable PDF found for identifier: %s', identifier)
+            return None
+
+        except requests.exceptions.RequestException as e:
+            logger.debug('Anna\'s Archive request failed: %s', e)
+            return None
+        except Exception as e:
+            logger.debug('Anna\'s Archive search error: %s', e)
+            return None
+
+    def _get_annas_archive_download_links(self, path):
+        """
+        Fetch the Anna's Archive download page and extract direct download links.
+        Returns the best PDF download URL or None.
+
+        Prioritizes:
+        1. Direct PDF links (libgen, IPFS gateways)
+        2. Slow download links as fallback
+        """
+        try:
+            # Construct full URL if path is relative
+            if path.startswith('/'):
+                detail_url = f'{ANNAS_ARCHIVE_BASE_URL}{path}'
+            else:
+                detail_url = path
+
+            res = self.sess.get(detail_url, timeout=15)
+            if res.status_code != 200:
+                logger.debug('Anna\'s Archive detail page returned status %d', res.status_code)
+                return None
+
+            soup = self._get_soup(res.content)
+
+            # Find download links - they may have different classes
+            # Look for links that contain download-related text or URLs
+            download_links = []
+
+            # Method 1: Look for links with js-download-link class
+            for link in soup.find_all('a', class_='js-download-link'):
+                href = link.get('href')
+                if href:
+                    download_links.append({
+                        'url': href,
+                        'text': link.get_text().lower()
+                    })
+
+            # Method 2: Look for links containing 'download' in href or text
+            for link in soup.find_all('a', href=True):
+                href = link.get('href', '')
+                text = link.get_text().lower()
+
+                # Skip if already found
+                if any(d['url'] == href for d in download_links):
+                    continue
+
+                # Check for download indicators
+                if ('download' in href.lower() or 'download' in text or
+                    'libgen' in href.lower() or 'library.lol' in href.lower() or
+                    'ipfs' in href.lower() or '.pdf' in href.lower()):
+                    download_links.append({
+                        'url': href,
+                        'text': text
+                    })
+
+            if not download_links:
+                logger.debug('Anna\'s Archive: No download links found on detail page')
+                return None
+
+            # Prioritize links - prefer direct PDF links from libgen/IPFS
+            priority_domains = ['library.lol', 'libgen', 'ipfs.io', 'cloudflare-ipfs', 'dweb.link']
+
+            # First pass: look for high-priority direct download links
+            for domain in priority_domains:
+                for link in download_links:
+                    if domain in link['url'].lower():
+                        url = link['url']
+                        # Make sure URL is absolute
+                        if url.startswith('/'):
+                            url = f'{ANNAS_ARCHIVE_BASE_URL}{url}'
+                        logger.debug('Anna\'s Archive: Found priority download link: %s', url)
+                        return url
+
+            # Second pass: look for any PDF link
+            for link in download_links:
+                url = link['url']
+                if '.pdf' in url.lower() or 'pdf' in link['text']:
+                    if url.startswith('/'):
+                        url = f'{ANNAS_ARCHIVE_BASE_URL}{url}'
+                    logger.debug('Anna\'s Archive: Found PDF download link: %s', url)
+                    return url
+
+            # Third pass: return first available download link
+            if download_links:
+                url = download_links[0]['url']
+                if url.startswith('/'):
+                    url = f'{ANNAS_ARCHIVE_BASE_URL}{url}'
+                logger.debug('Anna\'s Archive: Using fallback download link: %s', url)
+                return url
+
+            return None
+
+        except requests.exceptions.RequestException as e:
+            logger.debug('Anna\'s Archive download page request failed: %s', e)
+            return None
+        except Exception as e:
+            logger.debug('Anna\'s Archive download page error: %s', e)
+            return None
 
     # Expanded stop words list for better title matching
     STOP_WORDS = {
