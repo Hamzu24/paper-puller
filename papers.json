@@ -1,5 +1,5 @@
 {
-  "meta-anal": [
+  "old": [
     "Systematic Review and Meta-Analysis of Neurofeedback Training Efficacy and Neural Mechanisms in the Treatment of Posttraumatic Stress Disorder",
     "Neurofeedback for Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
     "Systematic Review and Meta-Analysis of Neurofeedback and Its Effect on Posttraumatic Stress Disorder",
@@ -10,9 +10,7 @@
     "Neurofeedback Training for Executive Function in ADHD Children: A Systematic Review and Meta-Analysis",
     "A Systematic Review on the Role of EEG and fMRI-Neurofeedback Training in the Treatment of Substance Use Disorders and Behavioral Addiction",
     "Neurofeedback in Substance and Non-Substance-Related Addictions: A Mini Review of Current Evidence and Future Directions",
-    "Mapping the Evolution of Neurofeedback Research: A Bibliometric Analysis of Trends and Future Directions"
-  ],
-  "RCTs": [
+    "Mapping the Evolution of Neurofeedback Research: A Bibliometric Analysis of Trends and Future Directions",
     "A Randomized Controlled Study of Neurofeedback for Chronic PTSD",
     "A Randomized, Controlled Trial of Alpha-Rhythm EEG Neurofeedback in Posttraumatic Stress Disorder",
     "Randomized Clinical Trial of Real-Time fMRI Amygdala Neurofeedback for Major Depressive Disorder: Effects on Symptoms and Autobiographical Memory Recall",
@@ -22,9 +20,7 @@
     "Amygdala-Related Electroencephalogram Neurofeedback as Add-on Therapy for Treatment-Resistant Childhood Sexual Abuse Posttraumatic Stress Disorder: Feasibility Study",
     "Effectiveness of Neurofeedback-Assisted and Conventional 6-Week Web-Based Mindfulness Interventions on Mental Health of Chinese Nursing Students: Randomized Controlled Trial",
     "Infralow Neurofeedback in the Treatment of Substance Use Disorders: A Randomized Controlled Trial",
-    "Near-Infrared Spectroscopy and Electroencephalography Neurofeedback for Binge-Eating Disorder: An Exploratory Randomized Trial"
-  ],
-  "protocol-studies": [
+    "Near-Infrared Spectroscopy and Electroencephalography Neurofeedback for Binge-Eating Disorder: An Exploratory Randomized Trial",
     "Facing Emotions: Real-Time fMRI-Based Neurofeedback Using Dynamic Emotional Faces to Modulate Amygdala Activity",
     "Real-Time Functional Connectivity-Based Neurofeedback of the DLPFC-Amygdala Pathway During Threat-Exposure Attenuates Anxiety",
     "A Randomised Controlled Trial of Amygdala fMRI-Neurofeedback Versus Sham-Feedback in Borderline Personality Disorder (BrainSTEADy Trial)",
@@ -33,35 +29,27 @@
     "Enhancing Effects of Exercise and Neurofeedback: A Systematic Review and Meta-Analysis of Computer Game-Based Interventions for Pediatric ADHD",
     "A Pilot Study of Neurofeedback for Chronic PTSD",
     "The Potential of Functional Near-Infrared Spectroscopy-Based Neurofeedback: A Systematic Review and Recommendations for Best Practice",
-    "Closed-Loop Brain Training: The Science of Neurofeedback"
-  ],
-  "placebo-sham": [
+    "Closed-Loop Brain Training: The Science of Neurofeedback",
     "The Psychology of Neurofeedback: Clinical Intervention Even if Applied Placebo",
     "Neurofeedback or Neuroplacebo?",
     "Treating ADHD With Suggestion: Neurofeedback and Placebo Therapeutics",
     "When Can Neurofeedback Join the Clinical Armamentarium?",
     "Neurofeedback as Placebo: A Case of Unintentional Deception?",
     "Consumer-Grade Neurofeedback With Mindfulness Meditation: Meta-Analysis",
-    "A Framework for Disentangling the Hyperbolic Truth of Neurofeedback: Comment on Thibault and Raz (2017)"
-  ],
-  "null-result": [
+    "A Framework for Disentangling the Hyperbolic Truth of Neurofeedback: Comment on Thibault and Raz (2017)",
     "Double-Blind, Sham-Controlled Randomized Trial Testing the Efficacy of fMRI Neurofeedback on Clinical and Cognitive Measures in Children With ADHD",
     "Neurofeedback, Sham Neurofeedback, and Cognitive-Behavioural Group Therapy in Adults With ADHD: A Triple-Blind, Randomised, Controlled Trial",
     "Better Than Sham? A Double-Blind Placebo-Controlled Neurofeedback Study in Primary Insomnia",
     "Double-Blind Placebo-Controlled Randomized Clinical Trial of Neurofeedback for Attention-Deficit/Hyperactivity Disorder With 13-Month Follow-Up",
     "ADHD and EEG-Neurofeedback: A Double-Blind Randomized Placebo-Controlled Feasibility Study",
     "Infralow Neurofeedback in the Treatment of Substance Use Disorders: A Randomized Controlled Trial",
-    "An RCT Into the Effects of Neurofeedback on Neurocognitive Functioning Compared to Stimulant Medication and Physical Activity in Children With ADHD"
-  ],
-  "critical": [
+    "An RCT Into the Effects of Neurofeedback on Neurocognitive Functioning Compared to Stimulant Medication and Physical Activity in Children With ADHD",
     "Neurofeedback for Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
     "Neurofeedback for ADHD: Time to Call It Quits?",
     "Systematic Review and Meta-Analysis of Neurofeedback Training Efficacy and Neural Mechanisms in the Treatment of Posttraumatic Stress Disorder",
     "Nonpharmacological Interventions for ADHD: Systematic Review and Meta-Analyses of Randomized Controlled Trials of Dietary and Psychological Treatments",
     "Neurofeedback for Attention-Deficit/Hyperactivity Disorder: Meta-Analysis of Clinical and Neuropsychological Outcomes From Randomized Controlled Trials",
-    "Neurotherapeutics for ADHD: Do They Work?"
-  ],
-  "critical2": [
+    "Neurotherapeutics for ADHD: Do They Work?",
     "The self-regulating brain and neurofeedback: Experimental science and clinical promise",
     "Neurofeedback with fMRI: A critical systematic review",
     "Methodological flaws in the Schönenberg (2017) neurofeedback study",
@@ -74,5 +62,67 @@
     "Closed-loop brain training: The science of neurofeedback",
     "The increase in theta/beta ratio on resting-state EEG in boys with attention-deficit/hyperactivity disorder is mediated by slow alpha peak frequency",
     "A decade of EEG theta/beta ratio research in ADHD: A meta-analysis"
+  ],
+  "RCTS1": [
+    "Neurofeedback for Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
+    "Neurofeedback for ADHD: A Review of Current Evidence",
+    "Sustained Effects of Neurofeedback in ADHD: A Systematic Review and Meta-Analysis",
+    "Efficacy of Neurofeedback Treatment in ADHD: The Effects on Inattention, Impulsivity, and Hyperactivity",
+    "EEG Neurofeedback Treatments in Children with ADHD: An Updated Meta-Analysis of RCTs",
+    "Comparative Efficacy of Neurofeedback Interventions for ADHD in Children: A Network Meta-Analysis",
+    "Uncovering the Power of Neurofeedback: A Meta-Analysis of Its Effectiveness in Treating Major Depressive Disorders",
+    "Efficacy of Bio- and Neurofeedback for Depression: A Meta-Analysis",
+    "Neurofeedback Training in Major Depressive Disorder: A Systematic Review of Clinical Efficacy, Study Quality and Reporting Practices",
+    "Systematic Review and Meta-Analysis of Neurofeedback Training Efficacy and Neural Mechanisms in PTSD Treatment",
+    "Systematic Review and Meta-Analysis of Neurofeedback and Its Effect on PTSD",
+    "Neurofeedback for PTSD: Systematic Review and Meta-Analysis of Clinical and Neurophysiological Outcomes",
+    "Electroencephalography-Based Neurofeedback as Treatment for PTSD",
+    "A Meta-Analysis of Neurofeedback for Treating Anxiety-Spectrum Disorders",
+    "Efficacy of EEG Neurofeedback in Psychiatry: A Comprehensive Overview and Meta-Analysis",
+    "Meta-Analysis of Neurofeedback for Substance Use Disorders",
+    "Neurofeedback in Substance Use Disorder: A Systematic Review",
+    "Systematic Review and Meta-Analysis of EEG Neurofeedback Combined with Pharmacological Treatment on Positive and Negative Symptoms in Schizophrenia",
+    "A Meta-Analytic Review of Efficacy of Neurofeedback in Epilepsy",
+    "Neurofeedback of Alpha Activity on Memory in Healthy Participants: A Systematic Review and Meta-Analysis",
+    "Effects of Neurofeedback in the Management of Chronic Pain: A Systematic Review and Meta-Analysis",
+    "A Scoping Review of the Effect of EEG Neurofeedback on Pain Complaints in Adults with Chronic Pain",
+    "Neurofeedback to Enhance Sleep Quality and Insomnia: A Systematic Review and Meta-Analysis of Randomized Clinical Trials",
+    "Effects of Neurofeedback on Cognitive Function, Productive Activity, and Quality of Life in Patients with Traumatic Brain Injury: A Randomized Controlled Trial",
+    "Assessing the Impact of Neurofeedback on Cognitive Function in Individuals with Autism Spectrum Disorder: A Systematic Review",
+    "Neurofeedback of Alpha Activity on Memory in Healthy Participants",
+    "The Effect of Neurofeedback on Reaction Time and Cognitive Performance of Athletes",
+    "Consumer-Grade Neurofeedback With Mindfulness Meditation: Meta-Analysis",
+    "Systematic Review and Meta-Analysis of the Relationships Between Real-Time Neurofeedback Training Parameters and Acquisition of Neural Modulation",
+    "Feedback-Based Treatments for Eating Disorders and Related Symptoms: A Systematic Review"
+  ],
+  "RCTS1_corrections": [
+    "Systematic review and meta-analysis of neurofeedback training efficacy and neural mechanisms in the treatment of posttraumatic stress disorder",
+    "Neurofeedback for post-traumatic stress disorder: systematic review and meta-analysis of clinical and neurophysiological outcomes",
+    "Comparative Efficacy of Neurofeedback Interventions for Attention-Deficit/Hyperactivity Disorder in Children: A Network Meta-Analysis",
+    "A meta-analysis of neurofeedback for treating substance use disorders",
+    "A Meta-Analysis of Neurofeedback for Treating Anxiety-Spectrum Disorders",
+    "Uncovering the Power of Neurofeedback: A Meta-Analysis of Its Effectiveness in Treating Major Depressive Disorders"
+  ],
+  "RCTS2": [
+    "The efficacy of real-time functional magnetic resonance imaging neurofeedback for psychiatric illness: A meta-analysis of brain and behavioral outcomes",
+    "Efficacy of bio- and neurofeedback for depression: a meta-analysis",
+    "Meta-analysis of real-time fMRI neurofeedback studies using individual participant data: How is brain regulation mediated?",
+    "Electroencephalography-based neurofeedback as treatment for post-traumatic stress disorder: A systematic review and meta-analysis",
+    "Neurofeedback training in major depressive disorder: A systematic review of clinical efficacy, study quality and reporting practices",
+    "Real-time fMRI neurofeedback as a new treatment for psychiatric disorders: A meta-analysis",
+    "The potential of functional near-infrared spectroscopy-based neurofeedback—A systematic review and recommendations for best practice",
+    "Biofeedback and neurofeedback for anxiety disorders: A quantitative and qualitative systematic review",
+    "Efficacy of EEG neurofeedback in psychiatry: A comprehensive overview and meta-analysis",
+    "Neurofeedback for post-traumatic stress disorder: systematic review and meta-analysis of clinical and neurophysiological outcomes",
+    "Systematic review and meta-analysis of neurofeedback and its effect on posttraumatic stress disorder",
+    "A meta-analysis of neurofeedback for treating anxiety-spectrum disorders",
+    "Efficacy of neuro-feedback training for PTSD symptoms: A systematic review and meta-analysis",
+    "Effect of EEG neurofeedback therapy on addiction disorders: A systematic review and meta-analysis",
+    "Uncovering the power of neurofeedback: a meta-analysis of its effectiveness in treating major depressive disorders",
+    "A systematic literature review and meta-analysis on effectiveness of neurofeedback for obsessive-compulsive disorder",
+    "A meta-analysis of neurofeedback for treating substance use disorders",
+    "The effectiveness of neurofeedback therapy as an alternative treatment for autism spectrum disorders in children: A systematic review",
+    "Systematic review and meta-analysis of the effects of EEG neurofeedback combined with pharmacological treatment on the positive and negative symptoms in patients with schizophrenia",
+    "Biofeedback for psychiatric disorders: A systematic review"
   ]
 }

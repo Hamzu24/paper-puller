@@ -51,6 +51,9 @@ class SciHub(object):
         self.unpaywall_email = unpaywall_email or 'scihub-api@example.com'
         self.openalex_api_key = openalex_api_key
 
+        # Title verification: stores the title returned by the API that resolved the PDF
+        self._last_resolved_title = None
+
     def _get_available_scihub_urls(self):
         '''
         Finds available scihub urls via https://sci-hub.now.sh/
@@ -233,6 +236,7 @@ class SciHub(object):
                    (spaces will be replaced with dashes)
         """
         url = None  # Initialize to avoid undefined variable in exception handlers
+        self._last_resolved_title = None
 
         try:
             url = self._get_direct_url(identifier)
@@ -265,7 +269,8 @@ class SciHub(object):
                             return {
                                 'pdf': res.content,
                                 'url': pdf_url,
-                                'name': self._generate_name(res, title=title)
+                                'name': self._generate_name(res, title=title),
+                                'resolved_title': self._last_resolved_title
                             }
                     except Exception as e:
                         logger.debug('Anna\'s Archive download failed: %s', e)
@@ -282,7 +287,8 @@ class SciHub(object):
                             return {
                                 'pdf': res.content,
                                 'url': pdf_url,
-                                'name': self._generate_name(res, title=title)
+                                'name': self._generate_name(res, title=title),
+                                'resolved_title': self._last_resolved_title
                             }
 
                 raise CaptchaNeedException('Failed to fetch pdf with identifier %s '
@@ -291,7 +297,8 @@ class SciHub(object):
                 return {
                     'pdf': res.content,
                     'url': url,
-                    'name': self._generate_name(res, title=title)
+                    'name': self._generate_name(res, title=title),
+                    'resolved_title': self._last_resolved_title
                 }
 
         except requests.exceptions.ConnectionError:
@@ -679,6 +686,7 @@ class SciHub(object):
             return None
 
         data = res.json()
+        self._last_resolved_title = data.get('title')
 
         # Try best_oa_location first
         best_oa = data.get('best_oa_location')
@@ -702,13 +710,14 @@ class SciHub(object):
         API: https://api.semanticscholar.org/graph/v1/paper/DOI:{doi}?fields=openAccessPdf
         Returns: openAccessPdf.url or None
         """
-        url = f'https://api.semanticscholar.org/graph/v1/paper/DOI:{doi}?fields=openAccessPdf'
+        url = f'https://api.semanticscholar.org/graph/v1/paper/DOI:{doi}?fields=openAccessPdf,title'
         res = self.sess.get(url, timeout=10)
 
         if res.status_code != 200:
             return None
 
         data = res.json()
+        self._last_resolved_title = data.get('title')
         open_access_pdf = data.get('openAccessPdf')
         if open_access_pdf:
             return open_access_pdf.get('url')
@@ -733,6 +742,7 @@ class SciHub(object):
             return None
 
         data = res.json()
+        self._last_resolved_title = data.get('title')
 
         # Try best_oa_location first
         best_oa = data.get('best_oa_location')
@@ -778,6 +788,8 @@ class SciHub(object):
         results = data.get('resultList', {}).get('result', [])
 
         for result in results:
+            self._last_resolved_title = result.get('title')
+
             # Check for full text URLs
             full_text_urls = result.get('fullTextUrlList', {}).get('fullTextUrl', [])
             for url_info in full_text_urls:
@@ -810,6 +822,8 @@ class SciHub(object):
 
         data = res.json()
         work = data.get('message', {})
+        titles = work.get('title', [])
+        self._last_resolved_title = titles[0] if titles else None
 
         # Check 'link' field for full-text URLs
         links = work.get('link', [])
@@ -859,6 +873,8 @@ class SciHub(object):
         results = data.get('results', [])
 
         for result in results:
+            self._last_resolved_title = result.get('title')
+
             # Check for downloadUrl (direct PDF link)
             download_url = result.get('downloadUrl')
             if download_url:
@@ -897,6 +913,7 @@ class SciHub(object):
 
             if res.status_code == 200:
                 data = res.json()
+                self._last_resolved_title = data.get('title')
 
                 # Check for files with PDF URLs
                 files = data.get('files', [])
@@ -1162,6 +1179,40 @@ class SciHub(object):
         union = words1 | words2
         return len(intersection) / len(union)
 
+    def _verify_title(self, expected_title, actual_title, threshold=0.75):
+        """
+        Verify downloaded paper title matches expected title.
+        Returns dict: {match: bool, score: float, expected: str, actual: str}
+        """
+        score = self._title_similarity(expected_title, actual_title)
+        return {
+            'match': score >= threshold,
+            'score': score,
+            'expected': expected_title,
+            'actual': actual_title,
+        }
+
+    def _lookup_title_by_doi(self, doi):
+        """
+        Look up a paper's title by DOI via CrossRef.
+        Used as a fallback when no resolved title was captured during download.
+        Returns title string or None.
+        """
+        url = f'https://api.crossref.org/works/{doi}'
+        headers = {
+            'User-Agent': 'SciHub-API/1.0 (mailto:scihub-api@example.com)'
+        }
+        try:
+            res = self.sess.get(url, headers=headers, timeout=10)
+            if res.status_code != 200:
+                return None
+            data = res.json()
+            titles = data.get('message', {}).get('title', [])
+            return titles[0] if titles else None
+        except Exception as e:
+            logger.debug('CrossRef title lookup failed for %s: %s', doi, e)
+            return None
+
     def _search_by_title_arxiv(self, title):
         """
         Search for a paper by title using arXiv API.
@@ -1217,7 +1268,7 @@ class SciHub(object):
         paper_title = ' '.join(title_el.text.split()) if title_el is not None else 'Unknown'
         logger.debug('arXiv: Found paper with %.0f%% title match: %s', best_score * 100, paper_title)
 
-        return {'arxiv_id': arxiv_id}
+        return {'arxiv_id': arxiv_id, 'matched_title': paper_title}
 
     def _search_by_title_openalex(self, title):
         """
@@ -1261,7 +1312,7 @@ class SciHub(object):
         logger.debug('OpenAlex: Found paper with %.0f%% title match: %s', best_score * 100, best_match.get('title', ''))
 
         paper = best_match
-        result = {}
+        result = {'matched_title': best_match.get('title', '')}
 
         # Check for arXiv ID in the ids field
         ids = paper.get('ids', {})
@@ -1325,7 +1376,7 @@ class SciHub(object):
 
         logger.debug('Semantic Scholar: Found paper with %.0f%% title match: %s', best_score * 100, best_match.get('title', ''))
 
-        result = {}
+        result = {'matched_title': best_match.get('title', '')}
         ext_ids = best_match.get('externalIds', {})
 
         # Get arXiv ID
@@ -1577,7 +1628,7 @@ class SciHub(object):
             filename += '.pdf'
         return filename
 
-    def download_from_json(self, json_path, category, output_dir):
+    def download_from_json(self, json_path, category, output_dir, verify=True):
         """
         Download papers from a specific category in the JSON file.
 
@@ -1585,6 +1636,8 @@ class SciHub(object):
             json_path: Path to JSON file
             category: Key name in the JSON dict to download
             output_dir: Directory to save PDFs and log file
+            verify: If True, verify downloaded paper title matches expected title.
+                    Mismatched papers are moved to an 'unverified/' subdirectory.
 
         JSON format: {"category_name": ["Title 1", "Title 2"], ...}
 
@@ -1634,11 +1687,16 @@ class SciHub(object):
                     print(f"  Found: {paper_info['name']}")
                     identifier = paper_info['url']
 
+            # Track DOI if found
+            doi = search_result.get('doi')
+            if not doi and identifier and self._classify(identifier) == 'doi':
+                doi = identifier
+
             if not identifier:
                 msg = f"{title} | FAILED | No results found"
                 print(f"  ✗ {msg}")
                 logger.info(msg)
-                results.append({'title': title, 'status': 'failed', 'error': 'No results'})
+                results.append({'title': title, 'status': 'failed', 'error': 'No results', 'doi': doi})
                 continue
 
             print(f"  Downloading...")
@@ -1654,10 +1712,34 @@ class SciHub(object):
                             filepath = os.path.join(output_dir, filename)
                             with open(filepath, 'wb') as f:
                                 f.write(res.content)
+
+                            # Title verification
+                            if verify:
+                                actual_title = search_result.get('matched_title')
+                                if not actual_title and identifier and self._classify(identifier) == 'doi':
+                                    actual_title = self._lookup_title_by_doi(identifier)
+                                if actual_title:
+                                    verification = self._verify_title(title, actual_title)
+                                    if not verification['match']:
+                                        unverified_dir = os.path.join(output_dir, 'unverified')
+                                        os.makedirs(unverified_dir, exist_ok=True)
+                                        new_path = os.path.join(unverified_dir, filename)
+                                        os.rename(filepath, new_path)
+                                        msg = (f"{title} | MISMATCH (score={verification['score']:.0%}) | "
+                                               f"Got: {actual_title} | Moved to unverified/")
+                                        print(f"  ? {msg}")
+                                        logger.warning(msg)
+                                        results.append({'title': title, 'status': 'mismatch',
+                                                        'score': verification['score'],
+                                                        'actual_title': actual_title,
+                                                        'filename': f"unverified/{filename}",
+                                                        'doi': doi})
+                                        continue
+
                             msg = f"{title} | SUCCESS | Saved as {filename}"
                             print(f"  ✓ {msg}")
                             logger.info(msg)
-                            results.append({'title': title, 'status': 'success', 'filename': filename})
+                            results.append({'title': title, 'status': 'success', 'filename': filename, 'doi': doi})
                             continue
                     except Exception as e:
                         logger.debug('Direct PDF fetch failed, trying normal download: %s', e)
@@ -1674,22 +1756,74 @@ class SciHub(object):
                     msg = f"{title} | FAILED | {result['err']}"
                     print(f"  ✗ {msg}")
                     logger.info(msg)
-                    results.append({'title': title, 'status': 'failed', 'error': result['err']})
+                    results.append({'title': title, 'status': 'failed', 'error': result['err'], 'doi': doi})
                 else:
+                    # Title verification
+                    if verify:
+                        actual_title = (result.get('resolved_title')
+                                        or search_result.get('matched_title'))
+                        if not actual_title and identifier and self._classify(identifier) == 'doi':
+                            actual_title = self._lookup_title_by_doi(identifier)
+                        if actual_title:
+                            verification = self._verify_title(title, actual_title)
+                            if not verification['match']:
+                                # Move file to unverified/ subdirectory
+                                unverified_dir = os.path.join(output_dir, 'unverified')
+                                os.makedirs(unverified_dir, exist_ok=True)
+                                src_path = os.path.join(output_dir, result['name'])
+                                dst_path = os.path.join(unverified_dir, result['name'])
+                                if os.path.exists(src_path):
+                                    os.rename(src_path, dst_path)
+                                msg = (f"{title} | MISMATCH (score={verification['score']:.0%}) | "
+                                       f"Got: {actual_title} | Moved to unverified/")
+                                print(f"  ? {msg}")
+                                logger.warning(msg)
+                                results.append({'title': title, 'status': 'mismatch',
+                                                'score': verification['score'],
+                                                'actual_title': actual_title,
+                                                'filename': f"unverified/{result['name']}",
+                                                'doi': doi})
+                                continue
+
                     msg = f"{title} | SUCCESS | Saved as {result['name']}"
                     print(f"  ✓ {msg}")
                     logger.info(msg)
-                    results.append({'title': title, 'status': 'success', 'filename': result['name']})
+                    results.append({'title': title, 'status': 'success', 'filename': result['name'], 'doi': doi})
             except Exception as e:
                 msg = f"{title} | FAILED | {str(e)}"
                 print(f"  ✗ {msg}")
                 logger.info(msg)
-                results.append({'title': title, 'status': 'failed', 'error': str(e)})
+                results.append({'title': title, 'status': 'failed', 'error': str(e), 'doi': doi})
 
         # Summary
         success = sum(1 for r in results if r['status'] == 'success')
+        mismatches = sum(1 for r in results if r['status'] == 'mismatch')
+        failed = sum(1 for r in results if r['status'] == 'failed')
         print(f"\nCompleted: {success}/{len(titles)} papers downloaded")
+        if mismatches:
+            print(f"  Mismatches: {mismatches} (moved to unverified/)")
+        if failed:
+            print(f"  Failed: {failed}")
         print(f"Log saved to: {log_path}")
+
+        # Save results to results.json in top-level folder
+        def _result_entry(r):
+            entry = {
+                'title': r['title'],
+                'title-formatted': r['title'].replace(' ', '-'),
+            }
+            if r.get('doi'):
+                entry['doi'] = r['doi']
+            return entry
+
+        results_json = {
+            'success': [_result_entry(r) for r in results if r['status'] == 'success'],
+            'failure': [_result_entry(r) for r in results if r['status'] in ('failed', 'mismatch')],
+        }
+        results_path = 'results.json'
+        with open(results_path, 'w') as f:
+            json.dump(results_json, f, indent=2)
+        print(f"Results saved to: {results_path}")
 
         # Remove the file handler to avoid duplicate logging on subsequent calls
         logger.removeHandler(file_handler)
@@ -1705,10 +1839,10 @@ def main():
     sh = SciHub()
 
     parser = argparse.ArgumentParser(description='SciHub - To remove all barriers in the way of science.')
-    parser.add_argument('category', nargs='?', default=None,
-                        help='Category name from papers.json to download')
+    parser.add_argument('key', metavar='KEY', nargs='?',
+                        help='Key in the JSON file whose value is the list of paper titles to download')
     parser.add_argument('--list', action='store_true',
-                        help='List available categories in papers.json')
+                        help='List available keys in the JSON file')
     parser.add_argument('-d', '--download', metavar='(DOI|PMID|URL)', help='tries to find and download the paper',
                         type=str)
     parser.add_argument('-f', '--file', metavar='path', help='pass file with list of identifiers and download each',
@@ -1718,9 +1852,13 @@ def main():
                         help='search Google Scholars and download if possible', type=str)
     parser.add_argument('-l', '--limit', metavar='N', help='the number of search results to limit to', default=10,
                         type=int)
+    parser.add_argument('-j', '--json', metavar='path', help='path to JSON file containing paper lists (default: papers.json)',
+                        default='papers.json', type=str)
     parser.add_argument('-o', '--output', metavar='path', help='directory to store papers', default='papers/', type=str)
     parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
     parser.add_argument('-p', '--proxy', help='via proxy format like socks5://user:pass@host:port', action='store', type=str)
+    parser.add_argument('--no-verify', action='store_true',
+                        help='skip post-download title verification')
 
     args = parser.parse_args()
 
@@ -1729,9 +1867,9 @@ def main():
     if args.proxy:
         sh.set_proxy(args.proxy)
 
-    # Default behavior: batch download from papers.json
-    if args.category or args.list:
-        json_path = 'papers.json'
+    # Default behavior: batch download from JSON file
+    if args.key or args.list:
+        json_path = args.json
 
         if not os.path.exists(json_path):
             print(f"Error: {json_path} not found")
@@ -1741,17 +1879,18 @@ def main():
             data = json.load(f)
 
         if args.list:
-            print("Available categories:")
+            print("Available keys:")
             for key, titles in data.items():
                 print(f"  {key} ({len(titles)} papers)")
             return
 
-        if args.category not in data:
-            print(f"Error: Category '{args.category}' not found")
+        if args.key not in data:
+            print(f"Error: Key '{args.key}' not found")
             print("Available:", ', '.join(data.keys()))
             return
 
-        sh.download_from_json(json_path, args.category, args.output)
+        sh.download_from_json(json_path, args.key, args.output,
+                              verify=not args.no_verify)
 
     elif args.download:
         result = sh.download(args.download, args.output)
