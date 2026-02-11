@@ -1,105 +1,18 @@
 {
   "success": [
     {
-      "title": "The efficacy of real-time functional magnetic resonance imaging neurofeedback for psychiatric illness: A meta-analysis of brain and behavioral outcomes",
-      "title-formatted": "The-efficacy-of-real-time-functional-magnetic-resonance-imaging-neurofeedback-for-psychiatric-illness:-A-meta-analysis-of-brain-and-behavioral-outcomes",
-      "doi": "10.1016/j.neubiorev.2020.12.020"
+      "title": "Are LLM Evaluators Really Narcissists? Sanity Checking Self-Preference Evaluations",
+      "title-formatted": "Are-LLM-Evaluators-Really-Narcissists?-Sanity-Checking-Self-Preference-Evaluations"
     },
     {
-      "title": "Efficacy of bio- and neurofeedback for depression: a meta-analysis",
-      "title-formatted": "Efficacy-of-bio--and-neurofeedback-for-depression:-a-meta-analysis",
-      "doi": "10.1017/s0033291721004396"
-    },
-    {
-      "title": "Meta-analysis of real-time fMRI neurofeedback studies using individual participant data: How is brain regulation mediated?",
-      "title-formatted": "Meta-analysis-of-real-time-fMRI-neurofeedback-studies-using-individual-participant-data:-How-is-brain-regulation-mediated?",
-      "doi": "10.1016/j.neuroimage.2015.09.042"
-    },
-    {
-      "title": "Electroencephalography-based neurofeedback as treatment for post-traumatic stress disorder: A systematic review and meta-analysis",
-      "title-formatted": "Electroencephalography-based-neurofeedback-as-treatment-for-post-traumatic-stress-disorder:-A-systematic-review-and-meta-analysis",
-      "doi": "10.1192/j.eurpsy.2019.7"
-    },
-    {
-      "title": "The potential of functional near-infrared spectroscopy-based neurofeedback\u2014A systematic review and recommendations for best practice",
-      "title-formatted": "The-potential-of-functional-near-infrared-spectroscopy-based-neurofeedback\u2014A-systematic-review-and-recommendations-for-best-practice",
-      "doi": "10.3389/fnins.2020.00594"
-    },
-    {
-      "title": "Efficacy of EEG neurofeedback in psychiatry: A comprehensive overview and meta-analysis",
-      "title-formatted": "Efficacy-of-EEG-neurofeedback-in-psychiatry:-A-comprehensive-overview-and-meta-analysis",
-      "doi": "10.15761/tbr.1000105"
-    },
-    {
-      "title": "Neurofeedback for post-traumatic stress disorder: systematic review and meta-analysis of clinical and neurophysiological outcomes",
-      "title-formatted": "Neurofeedback-for-post-traumatic-stress-disorder:-systematic-review-and-meta-analysis-of-clinical-and-neurophysiological-outcomes",
-      "doi": "10.1080/20008066.2023.2257435"
-    },
-    {
-      "title": "Systematic review and meta-analysis of neurofeedback and its effect on posttraumatic stress disorder",
-      "title-formatted": "Systematic-review-and-meta-analysis-of-neurofeedback-and-its-effect-on-posttraumatic-stress-disorder",
-      "doi": "10.3389/fpsyt.2024.1323485"
-    },
-    {
-      "title": "A meta-analysis of neurofeedback for treating anxiety-spectrum disorders",
-      "title-formatted": "A-meta-analysis-of-neurofeedback-for-treating-anxiety-spectrum-disorders",
-      "doi": "10.1002/jcad.12424"
-    },
-    {
-      "title": "Systematic review and meta-analysis of the effects of EEG neurofeedback combined with pharmacological treatment on the positive and negative symptoms in patients with schizophrenia",
-      "title-formatted": "Systematic-review-and-meta-analysis-of-the-effects-of-EEG-neurofeedback-combined-with-pharmacological-treatment-on-the-positive-and-negative-symptoms-in-patients-with-schizophrenia",
-      "doi": "10.3389/fpsyt.2025.1537329"
-    },
-    {
-      "title": "Biofeedback for psychiatric disorders: A systematic review",
-      "title-formatted": "Biofeedback-for-psychiatric-disorders:-A-systematic-review",
-      "doi": "10.1007/s10484-014-9246-9"
+      "title": "AI safety via debate",
+      "title-formatted": "AI-safety-via-debate"
     }
   ],
   "failure": [
     {
-      "title": "Neurofeedback training in major depressive disorder: A systematic review of clinical efficacy, study quality and reporting practices",
-      "title-formatted": "Neurofeedback-training-in-major-depressive-disorder:-A-systematic-review-of-clinical-efficacy,-study-quality-and-reporting-practices",
-      "doi": "10.31234/osf.io/5j4wy"
-    },
-    {
-      "title": "Real-time fMRI neurofeedback as a new treatment for psychiatric disorders: A meta-analysis",
-      "title-formatted": "Real-time-fMRI-neurofeedback-as-a-new-treatment-for-psychiatric-disorders:-A-meta-analysis",
-      "doi": "10.1016/j.pnpbp.2022.110605"
-    },
-    {
-      "title": "Biofeedback and neurofeedback for anxiety disorders: A quantitative and qualitative systematic review",
-      "title-formatted": "Biofeedback-and-neurofeedback-for-anxiety-disorders:-A-quantitative-and-qualitative-systematic-review",
-      "doi": "10.1007/978-981-32-9705-0_16"
-    },
-    {
-      "title": "Efficacy of neuro-feedback training for PTSD symptoms: A systematic review and meta-analysis",
-      "title-formatted": "Efficacy-of-neuro-feedback-training-for-PTSD-symptoms:-A-systematic-review-and-meta-analysis",
-      "doi": "10.3390/ijerph192013096"
-    },
-    {
-      "title": "Effect of EEG neurofeedback therapy on addiction disorders: A systematic review and meta-analysis",
-      "title-formatted": "Effect-of-EEG-neurofeedback-therapy-on-addiction-disorders:-A-systematic-review-and-meta-analysis",
-      "doi": "10.1111/add.70164"
-    },
-    {
-      "title": "Uncovering the power of neurofeedback: a meta-analysis of its effectiveness in treating major depressive disorders",
-      "title-formatted": "Uncovering-the-power-of-neurofeedback:-a-meta-analysis-of-its-effectiveness-in-treating-major-depressive-disorders",
-      "doi": "10.1093/cercor/bhae252"
-    },
-    {
-      "title": "A systematic literature review and meta-analysis on effectiveness of neurofeedback for obsessive-compulsive disorder",
-      "title-formatted": "A-systematic-literature-review-and-meta-analysis-on-effectiveness-of-neurofeedback-for-obsessive-compulsive-disorder",
-      "doi": "10.1080/13554794.2021.2019790"
-    },
-    {
-      "title": "A meta-analysis of neurofeedback for treating substance use disorders",
-      "title-formatted": "A-meta-analysis-of-neurofeedback-for-treating-substance-use-disorders",
-      "doi": "10.1002/jcad.12466"
-    },
-    {
-      "title": "The effectiveness of neurofeedback therapy as an alternative treatment for autism spectrum disorders in children: A systematic review",
-      "title-formatted": "The-effectiveness-of-neurofeedback-therapy-as-an-alternative-treatment-for-autism-spectrum-disorders-in-children:-A-systematic-review"
+      "title": "Measuring Reasoning Trace Legibility",
+      "title-formatted": "Measuring-Reasoning-Trace-Legibility"
     }
   ]
 }

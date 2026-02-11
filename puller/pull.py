@@ -1889,7 +1889,12 @@ def main():
             print("Available:", ', '.join(data.keys()))
             return
 
-        sh.download_from_json(json_path, args.key, args.output,
+        # Use papers_<category>/ as default output dir unless user specified -o
+        output_dir = args.output
+        if output_dir == 'papers/':
+            output_dir = f'papers_{args.key}/'
+
+        sh.download_from_json(json_path, args.key, output_dir,
                               verify=not args.no_verify)
 
     elif args.download:
